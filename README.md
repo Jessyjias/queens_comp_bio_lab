@@ -1,1 +1,2 @@
-# queens_comp_bio_lab
+# Queens Computational Biology Lab 
+POLE gene mutation detection project documentation and code. 
