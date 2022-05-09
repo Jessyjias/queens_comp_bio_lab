@@ -1,0 +1,80 @@
+---
+title: "MAF file Processing"
+output: pdf_document
+---
+
+```{r}
+library(randomForest)
+```
+
+
+```{r}
+library(maftools)
+
+#path to TCGA MAF file
+ucec.maf = "/Users/jessysong/Documents/Comp-Bio-Lab/TCGA_COAD_combined_somatic.maf"
+ucec = read.maf(maf = ucec.maf)
+#ucec_csv = subsetMaf(maf = ucec, mafObj = FALSE)
+write.csv(ucec@data, "coad_maf.csv", row.names = TRUE)
+
+```
+
+```{r}
+ucec
+#Shows sample summry.
+getSampleSummary(ucec)
+#Shows gene summary.
+getGeneSummary(ucec)
+#shows clinical data associated with samples
+getClinicalData(ucec)
+#Shows all fields in MAF
+getFields(ucec)
+#Writes maf summary to an output file with basename laml.
+write.mafSummary(maf = ucec, basename = 'ucec')
+```
+
+```{r}
+target_set = subsetMaf(maf = ucec, genes = c('POLE', 'POLD1'), mafObj = FALSE)
+write.csv(target_set, "target_set_1.csv", row.names = TRUE)
+```
+
+```{r}
+# save as a MAF object
+getSampleSummary(target_set)
+getGeneSummary(target_set)
+```
+
+```{r}
+plotmafSummary(maf = target_set, rmOutlier = TRUE, addStat = 'median', dashboard = TRUE, titvRaw = FALSE)
+```
+```{r}
+#oncoplot for top ten mutated genes. -> only 2 here 
+oncoplot(maf = target_set, top = 10)
+```
+```{r}
+target_set.titv = titv(maf = target_set, plot = FALSE, useSyn = TRUE)
+#plot titv summary
+plotTiTv(res = target_set.titv)
+```
+```{r}
+# rainfallPlot(maf = target_set, detectChangePoints = TRUE, pointSize = 0.4)
+```
+
+
+
+```{r}
+ucec.mutload = tcgaCompare(maf = ucec, cohortName = 'Example-UCEC', logscale = TRUE, capture_size = 50)
+```
+```{r}
+ucec.mutload = tcgaCompare(maf = target_set, cohortName = 'Target_subset-UCEC', logscale = TRUE, capture_size = 50)
+```
+```{r}
+
+## Read MAF from CSV
+
+cluster = read.csv("cluster.csv")
+cluster_maf = read.maf(cluster)
+write.table(cluster_maf@data, "cluster.maf", row.names = TRUE, col.names = NA)
+```
+
+
